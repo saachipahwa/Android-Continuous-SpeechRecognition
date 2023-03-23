@@ -76,7 +76,6 @@ public class MainActivity extends AppCompatActivity implements
     //WordGrid
     private GridView wordGrid;
     ArrayList<String> predictions = new ArrayList<>();
-    //final int[] images = {R.drawable.image1, R.drawable.image2, R.drawable.image3, R.drawable.image4};
     //Preferences
     String store_theme;
     String store_font;
@@ -193,10 +192,6 @@ public class MainActivity extends AppCompatActivity implements
                 break;
         }
 
-        //initial word grid set up (not sure if i should leave it empty)
-//        int nosugg = sharedPreferences.getInt("no_sugg_key", 6);
-//        Log.d("no_sugg ", Integer.toString(nosugg));
-//        makeWordGrid(predictions, nosugg);
 
         // initialise package that simplifies API calls
         AndroidNetworking.initialize(getApplicationContext());
@@ -229,14 +224,6 @@ public class MainActivity extends AppCompatActivity implements
                 httpResponse = Unirest.post("https://api.openai.com/v1/completions")
                         .header("Content-Type", "application/json")
                         .header("Authorization", secret_key)
-//                        .field("model", "text-davinci-002")
-//                        .field("prompt", params[0])
-//                        .field("temperature", 0.29)
-//                        .field("top_p", 1)
-//                        .field("frequency_penalty", 0)
-//                        .field("presence_penalty", 0)
-//                        .field("max_tokens", 5)
-//                        .field("logprobs", 10)
                     .body("{\"model\":\"text-davinci-002\",\"prompt\":\""+params[0]+"\",\"temperature\":0.29,\"top_p\":1,\"frequency_penalty\":0,\"presence_penalty\":0," +
                             "\"max_tokens\":5, \"logprobs\":10}")
                         .asJson();
@@ -578,38 +565,6 @@ public class MainActivity extends AppCompatActivity implements
         AsyncTaskRunner runner = new AsyncTaskRunner();
         runner.execute(bestMatch, String.valueOf(2));
 
-        // API calls to get an image for each word
-//        final String[] image_files = {"image1.xml", "image2.xml", "image3.xml", "image4.xml", "image5.xml", "image6.xml", "image7.xml", "image8.xml", "image9.xml"};
-//        final int[] image_drawables = this.images;
-//        for (int i = 0; i<predictions.length - 1 ; i++){
-//            final int finalI = i;
-//            AndroidNetworking.get("https://www.opensymbols.org/api/v2/symbols")
-//                    .addQueryParameter("q", predictions[i])
-//                    .build()
-//                    .getAsJSONArray(new JSONArrayRequestListener() {
-//                        @Override
-//                        public void onResponse(JSONArray response) {
-//                            String image_url = null;
-//                            try {
-//                                // use the first image provided by API
-//                                image_url = response.getJSONObject(0).getString("image_url");
-//                            } catch (JSONException e) {
-//                                e.printStackTrace();
-//                            }
-//                            try {
-//                                saveImage(image_url, image_files[finalI]);
-//                                Drawable.createFromXml(image_drawables[finalI], image_files[finalI]);
-//
-//                            } catch (IOException e) {
-//                                e.printStackTrace();
-//                            }
-//                        }
-//                        @Override
-//                        public void onError(ANError error) {
-//                            // handle error
-//                        }
-//                    });
-//        }
         speech.startListening(recognizerIntent);
     }
 
