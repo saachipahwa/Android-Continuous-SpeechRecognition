@@ -10,14 +10,14 @@
         android:key="@string/Show_images"
         android:title="@string/Show_images" />
 
-   <SeekBarPreference
-       android:progress="6"
-       android:defaultValue="6"
-       android:key="no_suggestions"
-       android:title="@string/no_suggestions"
-       android:min="1"
-       android:max="10"
-       />
+<!--   <SeekBarPreference-->
+<!--       android:progress="6"-->
+<!--       android:defaultValue="6"-->
+<!--       android:key="no_suggestions"-->
+<!--       android:title="@string/no_suggestions"-->
+<!--       android:min="1"-->
+<!--       android:max="10"-->
+<!--       />-->
    </PreferenceCategory>
 
     <PreferenceCategory android:title="Appearance">

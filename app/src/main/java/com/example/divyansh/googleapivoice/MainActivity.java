@@ -40,20 +40,15 @@ import com.mashape.unirest.http.exceptions.UnirestException;
 import com.mashape.unirest.request.GetRequest;
 import com.mashape.unirest.request.body.MultipartBody;
 import com.mashape.unirest.request.body.RequestBodyEntity;
-
+import okhttp3.*;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 import java.util.regex.Pattern;
-
-
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
-
 import android.os.AsyncTask;
-
-
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -72,10 +67,12 @@ public class MainActivity extends AppCompatActivity implements
     //UI
     private FloatingActionButton pauseButton;
     private FloatingActionButton playButton;
+    private FloatingActionButton resetButton;
     private FloatingActionButton settingsButton;
     //WordGrid
     private GridView wordGrid;
     ArrayList<String> predictions = new ArrayList<>();
+    //final int[] images = {R.drawable.image1, R.drawable.image2, R.drawable.image3, R.drawable.image4};
     //Preferences
     String store_theme;
     String store_font;
@@ -101,6 +98,7 @@ public class MainActivity extends AppCompatActivity implements
         playButton = findViewById(R.id.playButton);
         playButton.hide();
         bigPause.setVisibility(View.INVISIBLE);
+        resetButton = findViewById(R.id.resetButton);
         settingsButton = findViewById(R.id.plusButton);
 
         settingsButton.setOnClickListener(new View.OnClickListener() {
@@ -139,6 +137,13 @@ public class MainActivity extends AppCompatActivity implements
             }
         });
 
+        resetButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                returnedText.setText("Speak to start");
+                makeWordGrid(null, 0);
+            }
+        });
 
         //checking initial preferences
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(MainActivity.this);
@@ -192,7 +197,6 @@ public class MainActivity extends AppCompatActivity implements
                 break;
         }
 
-
         // initialise package that simplifies API calls
         AndroidNetworking.initialize(getApplicationContext());
 
@@ -212,86 +216,122 @@ public class MainActivity extends AppCompatActivity implements
 
     private class AsyncTaskRunner extends AsyncTask<String, String, ArrayList<String>> {
         private ArrayList<String> asyncPredictions = new ArrayList<>();
-        private Integer no_sugg;
         @Override
         protected ArrayList<String> doInBackground(String[] params) {
-            no_sugg = Integer.parseInt(params[1]);
-            HttpResponse<JsonNode> httpResponse = null;
-//           String secret_key = getApplicationContext().getString(R.api_key.PREDICTIONS_API_TOKEN);
-            String secret_key = getResources().getString(R.string.PREDICTIONS_API_TOKEN);
-            Log.i("secret key", secret_key);
+            String apiKey = getResources().getString(R.string.PREDICTIONS_API_TOKEN);
+            String modelEngine = "davinci";
+            String prompt = "This is a test prompt";
+            int maxTokens = 10;
+            OkHttpClient client = new OkHttpClient();
+            MediaType mediaType = MediaType.parse("application/json");
+            RequestBody body = RequestBody.create(mediaType,
+                    "{\"engine\":\"" + modelEngine + "\",\"prompt\":\"" + prompt + "\",\"max_tokens\":" + maxTokens + "}");
+            Request request = new Request.Builder()
+                    .url("https://api.openai.com/v1/engines/" + modelEngine + "/completions")
+                    .post(body)
+                    .addHeader("Content-Type", "application/json")
+                    .addHeader("Authorization", "Bearer " + apiKey)
+                    .build();
+
+            Response response = null;
             try {
-                httpResponse = Unirest.post("https://api.openai.com/v1/completions")
-                        .header("Content-Type", "application/json")
-                        .header("Authorization", secret_key)
-                    .body("{\"model\":\"text-davinci-002\",\"prompt\":\""+params[0]+"\",\"temperature\":0.29,\"top_p\":1,\"frequency_penalty\":0,\"presence_penalty\":0," +
-                            "\"max_tokens\":5, \"logprobs\":10}")
-                        .asJson();
-            } catch (UnirestException e) {
+                response = client.newCall(request).execute();
+            } catch (IOException e) {
                 e.printStackTrace();
             }
-            Log.d("httpResponse", String.valueOf(httpResponse));
-            assert httpResponse != null;
-
-            //extract JSONArray called "top_logprobs" containing the top predicted words
-            JSONObject responseObject = httpResponse.getBody().getObject();
-            Log.i("response", String.valueOf(responseObject));
-            JSONArray choices = new JSONArray();
+            String responseString = null;
             try {
-                choices = responseObject.getJSONArray("choices");
-            } catch (JSONException e) {
+                responseString = response.body().string();
+            } catch (IOException e) {
                 e.printStackTrace();
             }
-            JSONObject choicesObj = new JSONObject();
-            try {
-                 choicesObj = choices.getJSONObject(0);
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
+            Log.d("response", responseString);
+//            String text = responseString.split("\"text\":")[1].split("\"")[1];
+//            Log.d("text", text);
 
-            JSONObject logprobs = new JSONObject();
-            try {
-                logprobs = choicesObj.getJSONObject("logprobs");
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
-
-            JSONArray top_logprobs = new JSONArray();
-            try {
-                top_logprobs = logprobs.getJSONArray("top_logprobs");
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
-
-            JSONObject top_predictions = new JSONObject();
-            JSONObject top_predictions_secondword = new JSONObject();
-
-            try {
-                top_predictions = top_logprobs.getJSONObject(0);
-                top_predictions_secondword = top_logprobs.getJSONObject(1);
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
-            //convert JSONArray to ArrayList<String>
-            assert (top_predictions != null);
-            assert (top_predictions_secondword != null);
-
-            Iterator<String> keys = top_predictions.keys();
-            Iterator<String> keys_second = top_predictions_secondword.keys();
-
-            while(keys.hasNext()) {
-                String key = keys.next();
-                if (!Pattern.matches("[\\p{Punct}\\p{IsPunctuation}]|\n+", key)  && !key.equals("<|endoftext|>") && !key.equals("\")")) {
-                    asyncPredictions.add(key);
-                    }
-            }
-
-            while(keys_second.hasNext()) {
-                String key = keys_second.next();
-                if (!Pattern.matches("[\\p{Punct}\\p{IsPunctuation}]|\n+", key)  && !key.equals("<|endoftext|>") && !key.equals("\")")) {
-                        asyncPredictions.add(key);
-                }
-            }
+//            HttpResponse<JsonNode> httpResponse = null;
+////           String secret_key = getApplicationContext().getString(R.api_key.PREDICTIONS_API_TOKEN);
+//            String secret_key = getResources().getString(R.string.PREDICTIONS_API_TOKEN);
+//            Log.i("secret key", secret_key);
+//            try {
+//                httpResponse = Unirest.post("http://api.openai.com/v1/completions")
+//                    .header("Content-Type", "application/json")
+//                    .header("Authorization", secret_key)
+//                    .body("{\"model\":\"text-davinci-003\"," +
+//                            "\"prompt\":\""+params[0]+"\"," +
+//                            "\"temperature\":0.29," +
+//                            "\"top_p\":1," +
+//                            "\"frequency_penalty\":0," +
+//                            "\"presence_penalty\":0," +
+//                            "\"max_tokens\":5, " +
+//                            "\"logprobs\":10}")
+//                        .asJson();
+//            } catch (UnirestException e) {
+//                e.printStackTrace();
+//            }
+//            Log.d("httpResponse", String.valueOf(httpResponse));
+//            assert httpResponse != null;
+//
+//            //extract JSONArray called "top_logprobs" containing the top predicted words
+//            JSONObject responseObject = httpResponse.getBody().getObject();
+//            Log.i("response", String.valueOf(responseObject));
+//            JSONArray choices = new JSONArray();
+//            try {
+//                choices = responseObject.getJSONArray("choices");
+//            } catch (JSONException e) {
+//                e.printStackTrace();
+//            }
+//            JSONObject choicesObj = new JSONObject();
+//            try {
+//                 choicesObj = choices.getJSONObject(0);
+//            } catch (JSONException e) {
+//                e.printStackTrace();
+//            }
+//
+//            JSONObject logprobs = new JSONObject();
+//            try {
+//                logprobs = choicesObj.getJSONObject("logprobs");
+//            } catch (JSONException e) {
+//                e.printStackTrace();
+//            }
+//
+//            JSONArray top_logprobs = new JSONArray();
+//            try {
+//                top_logprobs = logprobs.getJSONArray("top_logprobs");
+//            } catch (JSONException e) {
+//                e.printStackTrace();
+//            }
+//
+//            JSONObject top_predictions = new JSONObject();
+//            JSONObject top_predictions_secondword = new JSONObject();
+//
+//            try {
+//                top_predictions = top_logprobs.getJSONObject(0);
+//                top_predictions_secondword = top_logprobs.getJSONObject(1);
+//            } catch (JSONException e) {
+//                e.printStackTrace();
+//            }
+//            //convert JSONArray to ArrayList<String>
+//            assert (top_predictions != null);
+//            assert (top_predictions_secondword != null);
+//
+//            Iterator<String> keys = top_predictions.keys();
+//            Iterator<String> keys_second = top_predictions_secondword.keys();
+//
+//            while(keys.hasNext()) {
+//                String key = keys.next();
+//                if (!Pattern.matches("[\\p{Punct}\\p{IsPunctuation}]|\n+", key)  && !key.equals("<|endoftext|>") && !key.equals("\")")) {
+//                    asyncPredictions.add(key);
+//                    }
+//            }
+//
+//            while(keys_second.hasNext()) {
+//                String key = keys_second.next();
+//                if (!Pattern.matches("[\\p{Punct}\\p{IsPunctuation}]|\n+", key)  && !key.equals("<|endoftext|>") && !key.equals("\")")) {
+//                        asyncPredictions.add(key);
+//                }
+//            }
+            asyncPredictions.add("Dog");
 
             Log.i("predictions", String.valueOf(asyncPredictions));
             return asyncPredictions;
@@ -300,21 +340,29 @@ public class MainActivity extends AppCompatActivity implements
         @Override
         protected void onPostExecute(ArrayList<String> asyncPredictions) {
             super.onPostExecute(asyncPredictions);
-            makeWordGrid(asyncPredictions, no_sugg);
+            Log.d("asyncPredictions", String.valueOf(asyncPredictions));
+            makeWordGrid(asyncPredictions, 6);
             predictions = asyncPredictions;
         }
     }
 
     public void makeWordGrid(ArrayList<String> predictedWords, int no_suggestions){
-        //cut down predicted words array based on the settings preference
-        if (predictedWords.size()>no_suggestions){
-            predictedWords.subList(0, no_suggestions);
-        }
+        Log.d("Making word grid", "yay");
 
-        //initialise and populate prediction array list
-        predictionModelArrayList = new ArrayList<PredictionModel>();
-        for (String predictedWord : predictedWords) {
-            predictionModelArrayList.add((new PredictionModel(predictedWord, R.drawable.wordsmith_logo_xml)));
+        if(predictedWords == null){
+            predictionModelArrayList = new ArrayList<PredictionModel>();
+        }
+        else {
+            //cut down predicted words array based on the settings preference
+            if (predictedWords.size() > no_suggestions) {
+                predictedWords.subList(0, no_suggestions);
+            }
+
+            //initialise and populate prediction array list
+            predictionModelArrayList = new ArrayList<PredictionModel>();
+            for (String predictedWord : predictedWords) {
+                predictionModelArrayList.add((new PredictionModel(predictedWord, R.drawable.wordsmith_logo_xml)));
+            }
         }
         //make new adapter and apply to grid
         PredictionGridAdapter adapter = new PredictionGridAdapter(this, predictionModelArrayList);
@@ -558,12 +606,8 @@ public class MainActivity extends AppCompatActivity implements
         returnedText.setText(last10Words(bestMatch));
 
 //      Getting predicted words
-        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(MainActivity.this);
-        Integer nosugg = sharedPreferences.getInt("no_sugg", 6);
-        Log.d("no_sugg ", Integer.toString(nosugg));
-
         AsyncTaskRunner runner = new AsyncTaskRunner();
-        runner.execute(bestMatch, String.valueOf(2));
+        runner.execute(bestMatch);
 
         speech.startListening(recognizerIntent);
     }

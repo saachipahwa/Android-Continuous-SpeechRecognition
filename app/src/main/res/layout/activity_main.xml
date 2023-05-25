@@ -61,7 +61,7 @@
         android:layout_height="80dp"
         android:layout_alignParentStart="true"
         android:layout_alignParentBottom="true"
-        android:layout_marginStart="138dp"
+        android:layout_marginStart="107dp"
         android:layout_marginBottom="31dp"
         android:contentDescription="Pauses listening"
         android:src="@drawable/ic_baseline_pause_24" />
@@ -72,10 +72,22 @@
         android:layout_height="80dp"
         android:layout_alignParentStart="true"
         android:layout_alignParentBottom="true"
-        android:layout_marginStart="138dp"
+        android:layout_marginStart="101dp"
         android:layout_marginBottom="31dp"
         android:contentDescription="Resumes listening"
         android:src="@drawable/ic_baseline_play_arrow_24" />
+
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/resetButton"
+        android:layout_width="80dp"
+        android:layout_height="80dp"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginStart="168dp"
+        android:layout_marginBottom="31dp"
+        android:contentDescription="Resumes listening"
+        android:src="@drawable/ic_baseline_reset_24" />
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/plusButton"
@@ -85,7 +97,7 @@
         android:contentDescription="Opens settings page"
         android:layout_alignParentEnd="true"
         android:layout_alignParentBottom="true"
-        android:layout_marginEnd="138dp"
+        android:layout_marginEnd="106dp"
         android:layout_marginBottom="31dp"
         />
 
