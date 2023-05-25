@@ -219,13 +219,14 @@ public class MainActivity extends AppCompatActivity implements
         @Override
         protected ArrayList<String> doInBackground(String[] params) {
             String apiKey = getResources().getString(R.string.PREDICTIONS_API_TOKEN);
-            String modelEngine = "davinci";
+            String modelEngine = "text-davinci-003";
             String prompt = "This is a test prompt";
             int maxTokens = 10;
             OkHttpClient client = new OkHttpClient();
             MediaType mediaType = MediaType.parse("application/json");
             RequestBody body = RequestBody.create(mediaType,
-                    "{\"engine\":\"" + modelEngine + "\",\"prompt\":\"" + prompt + "\",\"max_tokens\":" + maxTokens + "}");
+                    "{\"prompt\":\""+params[0]+"\",\"temperature\":0.29,\"top_p\":1,\"frequency_penalty\":0,\"presence_penalty\":0," +
+                            "\"max_tokens\":5, \"logprobs\":10}");
             Request request = new Request.Builder()
                     .url("https://api.openai.com/v1/engines/" + modelEngine + "/completions")
                     .post(body)
@@ -246,92 +247,72 @@ public class MainActivity extends AppCompatActivity implements
                 e.printStackTrace();
             }
             Log.d("response", responseString);
-//            String text = responseString.split("\"text\":")[1].split("\"")[1];
-//            Log.d("text", text);
+            JSONObject responseJSONobj = null;
+            try {
+                responseJSONobj = new JSONObject(responseString);
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
 
-//            HttpResponse<JsonNode> httpResponse = null;
-////           String secret_key = getApplicationContext().getString(R.api_key.PREDICTIONS_API_TOKEN);
-//            String secret_key = getResources().getString(R.string.PREDICTIONS_API_TOKEN);
-//            Log.i("secret key", secret_key);
-//            try {
-//                httpResponse = Unirest.post("http://api.openai.com/v1/completions")
-//                    .header("Content-Type", "application/json")
-//                    .header("Authorization", secret_key)
-//                    .body("{\"model\":\"text-davinci-003\"," +
-//                            "\"prompt\":\""+params[0]+"\"," +
-//                            "\"temperature\":0.29," +
-//                            "\"top_p\":1," +
-//                            "\"frequency_penalty\":0," +
-//                            "\"presence_penalty\":0," +
-//                            "\"max_tokens\":5, " +
-//                            "\"logprobs\":10}")
-//                        .asJson();
-//            } catch (UnirestException e) {
-//                e.printStackTrace();
-//            }
-//            Log.d("httpResponse", String.valueOf(httpResponse));
-//            assert httpResponse != null;
-//
-//            //extract JSONArray called "top_logprobs" containing the top predicted words
-//            JSONObject responseObject = httpResponse.getBody().getObject();
-//            Log.i("response", String.valueOf(responseObject));
-//            JSONArray choices = new JSONArray();
-//            try {
-//                choices = responseObject.getJSONArray("choices");
-//            } catch (JSONException e) {
-//                e.printStackTrace();
-//            }
-//            JSONObject choicesObj = new JSONObject();
-//            try {
-//                 choicesObj = choices.getJSONObject(0);
-//            } catch (JSONException e) {
-//                e.printStackTrace();
-//            }
-//
-//            JSONObject logprobs = new JSONObject();
-//            try {
-//                logprobs = choicesObj.getJSONObject("logprobs");
-//            } catch (JSONException e) {
-//                e.printStackTrace();
-//            }
-//
-//            JSONArray top_logprobs = new JSONArray();
-//            try {
-//                top_logprobs = logprobs.getJSONArray("top_logprobs");
-//            } catch (JSONException e) {
-//                e.printStackTrace();
-//            }
-//
-//            JSONObject top_predictions = new JSONObject();
-//            JSONObject top_predictions_secondword = new JSONObject();
-//
-//            try {
-//                top_predictions = top_logprobs.getJSONObject(0);
-//                top_predictions_secondword = top_logprobs.getJSONObject(1);
-//            } catch (JSONException e) {
-//                e.printStackTrace();
-//            }
-//            //convert JSONArray to ArrayList<String>
-//            assert (top_predictions != null);
-//            assert (top_predictions_secondword != null);
-//
-//            Iterator<String> keys = top_predictions.keys();
-//            Iterator<String> keys_second = top_predictions_secondword.keys();
-//
-//            while(keys.hasNext()) {
-//                String key = keys.next();
-//                if (!Pattern.matches("[\\p{Punct}\\p{IsPunctuation}]|\n+", key)  && !key.equals("<|endoftext|>") && !key.equals("\")")) {
-//                    asyncPredictions.add(key);
-//                    }
-//            }
-//
-//            while(keys_second.hasNext()) {
-//                String key = keys_second.next();
-//                if (!Pattern.matches("[\\p{Punct}\\p{IsPunctuation}]|\n+", key)  && !key.equals("<|endoftext|>") && !key.equals("\")")) {
-//                        asyncPredictions.add(key);
-//                }
-//            }
-            asyncPredictions.add("Dog");
+            //extract JSONArray called "top_logprobs" containing the top predicted words
+            JSONArray choices = new JSONArray();
+            try {
+                choices = responseJSONobj.getJSONArray("choices");
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+            JSONObject choicesObj = new JSONObject();
+            try {
+                 choicesObj = choices.getJSONObject(0);
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+
+            JSONObject logprobs = new JSONObject();
+            try {
+                logprobs = choicesObj.getJSONObject("logprobs");
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+
+            JSONArray top_logprobs = new JSONArray();
+            try {
+                top_logprobs = logprobs.getJSONArray("top_logprobs");
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+
+            JSONObject top_predictions = new JSONObject();
+            JSONObject top_predictions_secondword = new JSONObject();
+
+            try {
+                top_predictions = top_logprobs.getJSONObject(0);
+                top_predictions_secondword = top_logprobs.getJSONObject(1);
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+            Log.i("top_predictions", String.valueOf(top_predictions));
+            Log.i("secondword", String.valueOf(top_predictions_secondword));
+            //convert JSONArray to ArrayList<String>
+            assert (top_predictions != null);
+            assert (top_predictions_secondword != null);
+
+            Iterator<String> keys = top_predictions.keys();
+            Iterator<String> keys_second = top_predictions_secondword.keys();
+
+            while(keys.hasNext()) {
+                String key = keys.next();
+                if (Pattern.matches("[ ]*[a-zA-Z]+[ ]*", key)){
+                    asyncPredictions.add(key);
+                }
+            }
+
+            while(keys_second.hasNext()) {
+                String key = keys_second.next();
+                if (Pattern.matches("[a-zA-Z]+", key)){
+                    asyncPredictions.add(key);
+                }
+            }
 
             Log.i("predictions", String.valueOf(asyncPredictions));
             return asyncPredictions;
