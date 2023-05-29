@@ -69,6 +69,7 @@ public class MainActivity extends AppCompatActivity implements
     private SpeechRecognizer speech = null;
     private Intent recognizerIntent;
     private String LOG_TAG = "VoiceRecognitionActivity";
+    private String ongoingSpeech;
     //UI
     private FloatingActionButton pauseButton;
     private FloatingActionButton playButton;
@@ -234,7 +235,7 @@ public class MainActivity extends AppCompatActivity implements
                 prompt = params[0].substring(0,params[0].length()-2);
             }
             RequestBody body = RequestBody.create(mediaType,
-                    "{\"prompt\":\""+prompt+"\",\"temperature\":0.29,\"top_p\":1,\"frequency_penalty\":0,\"presence_penalty\":0," +
+                    "{\"prompt\":\""+prompt+"\",\"temperature\":0.72,\"top_p\":1,\"frequency_penalty\":0,\"presence_penalty\":0," +
                             "\"max_tokens\":5, \"logprobs\":10}");
             Request request = new Request.Builder()
                     .url("https://api.openai.com/v1/engines/" + modelEngine + "/completions")
@@ -255,7 +256,9 @@ public class MainActivity extends AppCompatActivity implements
             } catch (IOException e) {
                 e.printStackTrace();
             }
+
             Log.d("response", responseString);
+
             JSONObject responseJSONobj = null;
             try {
                 responseJSONobj = new JSONObject(responseString);
@@ -270,6 +273,7 @@ public class MainActivity extends AppCompatActivity implements
             } catch (JSONException e) {
                 e.printStackTrace();
             }
+
             JSONObject choicesObj = new JSONObject();
             try {
                  choicesObj = choices.getJSONObject(0);
@@ -367,8 +371,6 @@ public class MainActivity extends AppCompatActivity implements
     }
 
     public void makeWordGrid(ArrayList<String> predictedWords, int no_suggestions){
-        Log.d("Making word grid", "yay");
-
         if(predictedWords == null){
             predictionModelArrayList = new ArrayList<PredictionModel>();
         }
@@ -626,7 +628,8 @@ public class MainActivity extends AppCompatActivity implements
 
 //      Getting predicted words
         AsyncTaskRunner runner = new AsyncTaskRunner();
-        runner.execute(bestMatch);
+        ongoingSpeech += bestMatch;
+        runner.execute(ongoingSpeech);
 
         speech.startListening(recognizerIntent);
     }
