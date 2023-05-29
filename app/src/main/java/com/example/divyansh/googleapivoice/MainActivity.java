@@ -69,7 +69,7 @@ public class MainActivity extends AppCompatActivity implements
     private SpeechRecognizer speech = null;
     private Intent recognizerIntent;
     private String LOG_TAG = "VoiceRecognitionActivity";
-    private String ongoingSpeech;
+    private String ongoingSpeech="";
     //UI
     private FloatingActionButton pauseButton;
     private FloatingActionButton playButton;
@@ -237,42 +237,50 @@ public class MainActivity extends AppCompatActivity implements
             RequestBody body = RequestBody.create(mediaType,
                     "{\"prompt\":\""+prompt+"\",\"temperature\":0.72,\"top_p\":1,\"frequency_penalty\":0,\"presence_penalty\":0," +
                             "\"max_tokens\":5, \"logprobs\":10}");
-            Request request = new Request.Builder()
-                    .url("https://api.openai.com/v1/engines/" + modelEngine + "/completions")
-                    .post(body)
-                    .addHeader("Content-Type", "application/json")
-                    .addHeader("Authorization", "Bearer " + apiKey)
-                    .build();
-
-            Response response = null;
-            try {
-                response = client.newCall(request).execute();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-            String responseString = null;
-            try {
-                responseString = response.body().string();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-
-            Log.d("response", responseString);
-
-            JSONObject responseJSONobj = null;
-            try {
-                responseJSONobj = new JSONObject(responseString);
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
-
-            //extract JSONArray called "top_logprobs" containing the top predicted words
+            Log.d("prompt", prompt);
+            boolean error = true;
             JSONArray choices = new JSONArray();
-            try {
-                choices = responseJSONobj.getJSONArray("choices");
-            } catch (JSONException e) {
-                e.printStackTrace();
+            while(error){
+                Request request = new Request.Builder()
+                        .url("https://api.openai.com/v1/engines/" + modelEngine + "/completions")
+                        .post(body)
+                        .addHeader("Content-Type", "application/json")
+                        .addHeader("Authorization", "Bearer " + apiKey)
+                        .build();
+
+                Response response = null;
+                try {
+                    response = client.newCall(request).execute();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+                String responseString = null;
+                try {
+                    responseString = response.body().string();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+
+                Log.d("response", responseString);
+
+
+                JSONObject responseJSONobj = null;
+                try {
+                    responseJSONobj = new JSONObject(responseString);
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+
+                //extract JSONArray called "top_logprobs" containing the top predicted words
+                try {
+                    choices = responseJSONobj.getJSONArray("choices");
+                    error=false;
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                    Log.d("error?", "could not get choices");
+                }
             }
+
 
             JSONObject choicesObj = new JSONObject();
             try {
@@ -320,22 +328,28 @@ public class MainActivity extends AppCompatActivity implements
 
             while(keys.hasNext()) {
                 String key = keys.next();
-                if (Pattern.matches("[ ]*[a-zA-Z]+[ ]*", key)){
-                    asyncPredictions.add(key);
+                if (!Pattern.matches("null", key)){
+                     if (Pattern.matches("[ ]*[a-zA-Z']+[ ]*", key)) {
+                        asyncPredictions.add(key);
+                     }
                 }
             }
 
             while(keys_second.hasNext()) {
                 String key = keys_second.next();
-                if (Pattern.matches("[ ]*[a-zA-Z]+[ ]*", key)){
-                    asyncPredictions.add(key);
+                if (!Pattern.matches("null", key)) {
+                    if (Pattern.matches("[ ]*[a-zA-Z']+[ ]*", key)) {
+                        asyncPredictions.add(key);
+                    }
                 }
             }
 
             while(keys_third.hasNext()) {
                 String key = keys_third.next();
-                if (Pattern.matches("[ ]*[a-zA-Z]+[ ]*", key)){
-                    asyncPredictions.add(key);
+                if (!Pattern.matches("null", key)){
+                    if (Pattern.matches("[ ]*[a-zA-Z']+[ ]*", key)){
+                        asyncPredictions.add(key);
+                    }
                 }
             }
 
@@ -623,12 +637,19 @@ public class MainActivity extends AppCompatActivity implements
     public void onResults(Bundle results) {
         Log.i(LOG_TAG, "onResults");
         ArrayList<String> matches = results.getStringArrayList(SpeechRecognizer.RESULTS_RECOGNITION);
-        String bestMatch = matches.get(0);
+        String bestMatch;
+        if (matches.get(0) == null){
+            bestMatch = "";
+        }
+        else{
+            bestMatch = matches.get(0);
+        }
         returnedText.setText(last10Words(bestMatch));
 
 //      Getting predicted words
         AsyncTaskRunner runner = new AsyncTaskRunner();
-        ongoingSpeech += bestMatch;
+        if (bestMatch!=null){
+            ongoingSpeech += " " + bestMatch;}
         runner.execute(ongoingSpeech);
 
         speech.startListening(recognizerIntent);
