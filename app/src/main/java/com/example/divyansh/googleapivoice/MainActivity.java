@@ -7,11 +7,14 @@ import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.graphics.Typeface;
 import android.os.AsyncTask;
+import android.os.Build;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.speech.RecognitionListener;
 import android.speech.RecognizerIntent;
 import android.speech.SpeechRecognizer;
+
+import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.app.AppCompatDelegate;
 import androidx.core.app.ActivityCompat;
@@ -46,6 +49,8 @@ import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
+
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import android.os.AsyncTask;
@@ -216,16 +221,20 @@ public class MainActivity extends AppCompatActivity implements
 
     private class AsyncTaskRunner extends AsyncTask<String, String, ArrayList<String>> {
         private ArrayList<String> asyncPredictions = new ArrayList<>();
+
+        @RequiresApi(api = Build.VERSION_CODES.N)
         @Override
         protected ArrayList<String> doInBackground(String[] params) {
             String apiKey = getResources().getString(R.string.PREDICTIONS_API_TOKEN);
             String modelEngine = "text-davinci-003";
-            String prompt = "This is a test prompt";
-            int maxTokens = 10;
+            String prompt = params[0];
             OkHttpClient client = new OkHttpClient();
             MediaType mediaType = MediaType.parse("application/json");
+            if (params[0].endsWith(" ")){
+                prompt = params[0].substring(0,params[0].length()-2);
+            }
             RequestBody body = RequestBody.create(mediaType,
-                    "{\"prompt\":\""+params[0]+"\",\"temperature\":0.29,\"top_p\":1,\"frequency_penalty\":0,\"presence_penalty\":0," +
+                    "{\"prompt\":\""+prompt+"\",\"temperature\":0.29,\"top_p\":1,\"frequency_penalty\":0,\"presence_penalty\":0," +
                             "\"max_tokens\":5, \"logprobs\":10}");
             Request request = new Request.Builder()
                     .url("https://api.openai.com/v1/engines/" + modelEngine + "/completions")
@@ -284,21 +293,26 @@ public class MainActivity extends AppCompatActivity implements
 
             JSONObject top_predictions = new JSONObject();
             JSONObject top_predictions_secondword = new JSONObject();
+            JSONObject top_predictions_thirdword = new JSONObject();
 
             try {
                 top_predictions = top_logprobs.getJSONObject(0);
                 top_predictions_secondword = top_logprobs.getJSONObject(1);
+                top_predictions_thirdword = top_logprobs.getJSONObject(2);
             } catch (JSONException e) {
                 e.printStackTrace();
             }
             Log.i("top_predictions", String.valueOf(top_predictions));
-            Log.i("secondword", String.valueOf(top_predictions_secondword));
-            //convert JSONArray to ArrayList<String>
+            Log.i("second_word", String.valueOf(top_predictions_secondword));
+            Log.i("third_word", String.valueOf(top_predictions_thirdword));
+
             assert (top_predictions != null);
             assert (top_predictions_secondword != null);
+            assert (top_predictions_thirdword != null);
 
             Iterator<String> keys = top_predictions.keys();
             Iterator<String> keys_second = top_predictions_secondword.keys();
+            Iterator<String> keys_third = top_predictions_thirdword.keys();
 
             while(keys.hasNext()) {
                 String key = keys.next();
@@ -309,13 +323,38 @@ public class MainActivity extends AppCompatActivity implements
 
             while(keys_second.hasNext()) {
                 String key = keys_second.next();
-                if (Pattern.matches("[a-zA-Z]+", key)){
+                if (Pattern.matches("[ ]*[a-zA-Z]+[ ]*", key)){
                     asyncPredictions.add(key);
                 }
             }
 
+            while(keys_third.hasNext()) {
+                String key = keys_third.next();
+                if (Pattern.matches("[ ]*[a-zA-Z]+[ ]*", key)){
+                    asyncPredictions.add(key);
+                }
+            }
+
+            for(int i=0;i<asyncPredictions.size();i++){
+                asyncPredictions.set(i, asyncPredictions.get(i).toLowerCase());
+                asyncPredictions=removeDuplicates(asyncPredictions);
+                asyncPredictions.set(i, asyncPredictions.get(i).replace(" ", ""));
+            }
+
             Log.i("predictions", String.valueOf(asyncPredictions));
             return asyncPredictions;
+        }
+
+        public ArrayList<String> removeDuplicates(ArrayList<String> strList) {
+            for(int i = 0; i < strList.size(); i++) {
+                for(int j = i + 1; j < strList.size(); j++) {
+                    if(strList.get(i).equalsIgnoreCase(strList.get(j))){
+                        strList.remove(j);
+                        j--;
+                    }
+                }
+            }
+            return strList;
         }
 
         @Override
