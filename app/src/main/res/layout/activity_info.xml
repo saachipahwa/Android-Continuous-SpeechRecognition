@@ -31,10 +31,19 @@
         android:layout_centerHorizontal="true"
         android:layout_marginStart="22dp"
         android:layout_marginTop="160dp"
-        android:layout_marginEnd="26dp"
         android:fontFamily="@font/montserratmed"
         android:gravity="start"
-        android:textSize="17sp" />
+        android:textSize="17sp"
+        android:lineSpacingExtra="4sp"
+    />
+
+    <Button
+        android:id="@+id/feedbackFormButton"
+        android:layout_width="150dp"
+        android:layout_height="60dp"
+        android:layout_marginTop="550dp"
+        android:layout_centerHorizontal="true"
+        android:text="Give us feedback" />
 
 
     <ImageView

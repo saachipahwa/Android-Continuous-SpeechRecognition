@@ -17,6 +17,8 @@
     <string name="right">right</string>
     <string name="go_back_to_main">go back to main</string>
     <string name="logo">logo</string>
+    <string name="feedbackform"><a href="https://www.google.com/">To provide feedback, click this!</a></string>
+
 
     <string-array name="pref_themecoloursy">
         <item>Light</item>
