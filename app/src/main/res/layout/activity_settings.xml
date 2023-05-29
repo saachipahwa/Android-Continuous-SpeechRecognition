@@ -20,7 +20,7 @@
         android:fontFamily="@font/montserratmed"
         android:gravity="start"
         android:text="@string/customise"
-        android:textSize="30sp" />
+        android:textSize="29sp" />
 
     <!--frame layout for displaying
         our preference fragment-->

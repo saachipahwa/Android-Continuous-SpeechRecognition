@@ -29,7 +29,7 @@ public class InfoActivity extends AppCompatActivity {
         text = findViewById(R.id.text);
 
         if (id==0){
-            heading.setText("About Wordsmith");
+            heading.setText("About WordSmith");
             text.setText("Thank you for using WordSmith! We started work on this app in late 2020 to help people speak more easily and connect with others.\n\n" +
                     "We will always treat your personal data securely (in line with GDPR).\n\n" +
                     "We hope you find our product useful. Please contact us at wordsmithproj@gmail.com to tell us how we can improve.\n\n" +

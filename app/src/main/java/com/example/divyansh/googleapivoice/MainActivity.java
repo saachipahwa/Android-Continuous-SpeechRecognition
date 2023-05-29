@@ -498,11 +498,10 @@ public class MainActivity extends AppCompatActivity implements
                 break;
         }
 
-        store_nosugg = sharedPreferences.getInt("no_sugg", 6);
 //        Log.d("no_sugg ", String.valueOf(store_nosugg));
 
         //reset Predicted word grid (update font, fontsize, showing images, and number of sugg)
-        makeWordGrid(predictions, store_nosugg);
+        makeWordGrid(predictions, 6);
 
         //Resume speech recognition
         resetSpeechRecognizer();
