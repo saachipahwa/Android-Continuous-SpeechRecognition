@@ -30,23 +30,20 @@ public class InfoActivity extends AppCompatActivity {
 
         if (id==0){
             heading.setText("About Wordsmith");
-            text.setText("Thank you for using WordSmith! We started this app in late 2020 to help people speak more easily and connect with others.\n" +
-                    "    \n" +
-                    "We will always treat your personal data securely (in line with GDPR).\n" +
-                    "    \n" +
-                    "We hope you find our product useful. Please contact us at wordsmithproj@gmail.com to tell us how we can improve.\n" +
-                    "    \n" +
-                    "Divya and Yaning");
+            text.setText("Thank you for using WordSmith! We started work on this app in late 2020 to help people speak more easily and connect with others.\n\n" +
+                    "We will always treat your personal data securely (in line with GDPR).\n\n" +
+                    "We hope you find our product useful. Please contact us at wordsmithproj@gmail.com to tell us how we can improve.\n\n" +
+                    "Team WordSmith");
         }
         if (id==1){
             heading.setText("How to use this app");
-            text.setText("To use the Predictive Text Teleprompter:\n\n" +
-                    "    1. Find a quiet place where there is little background noise\n" +
-                    "    2. Make sure that your phone microphone and speaker are working\n" +
-                    "    4. Leave the app open and speak normally\n" +
-                    "    5. If you can’t think of the next word to say, check your screen to see predicted words\n" +
-                    "    6. If you’d like, tap a word to hear it read aloud\n" +
-                    "    7. Continue your conversation");
+            text.setText("To use the Predictive Text Teleprompter\n\n" +
+                    "1. Find a quiet place where there is little background noise\n\n" +
+                    "2. Make sure that your phone microphone and speaker are working\n\n" +
+                    "3. Leave the app open and speak normally\n\n" +
+                    "4. If you can’t think of the next word to say, check your screen to see predicted words\n\n" +
+                    "5. If you’d like, tap a word to hear it read aloud\n\n" +
+                    "6. Continue your conversation");
         }
 
         // set up home button
