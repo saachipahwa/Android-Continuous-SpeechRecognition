@@ -219,6 +219,18 @@ public class MainActivity extends AppCompatActivity implements
         speech.startListening(recognizerIntent);
     }
 
+    public ArrayList<String> removeDuplicates(ArrayList<String> strList) { //remove duplicates ignoring case
+        for(int i = 0; i < strList.size(); i++) {
+            for(int j = i + 1; j < strList.size(); j++) {
+                if(strList.get(i).equalsIgnoreCase(strList.get(j))){
+                    strList.remove(j);
+                    j--;
+                }
+            }
+        }
+        return strList;
+    }
+
     private class AsyncTaskRunner extends AsyncTask<String, String, ArrayList<String>> {
         private ArrayList<String> asyncPredictions = new ArrayList<>();
 
@@ -368,17 +380,7 @@ public class MainActivity extends AppCompatActivity implements
             return asyncPredictions;
         }
 
-        public ArrayList<String> removeDuplicates(ArrayList<String> strList) { //remove duplicates ignoring case
-            for(int i = 0; i < strList.size(); i++) {
-                for(int j = i + 1; j < strList.size(); j++) {
-                    if(strList.get(i).equalsIgnoreCase(strList.get(j))){
-                        strList.remove(j);
-                        j--;
-                    }
-                }
-            }
-            return strList;
-        }
+
 
         @Override
         protected void onPostExecute(ArrayList<String> asyncPredictions) {
