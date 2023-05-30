@@ -147,7 +147,7 @@ public class MainActivity extends AppCompatActivity implements
             @Override
             public void onClick(View view) {
                 returnedText.setText("Speak to start");
-                makeWordGrid(null, 0);
+                makeWordGrid(null);
             }
         });
 
@@ -379,27 +379,20 @@ public class MainActivity extends AppCompatActivity implements
         protected void onPostExecute(ArrayList<String> asyncPredictions) {
             super.onPostExecute(asyncPredictions);
             Log.d("asyncPredictions", String.valueOf(asyncPredictions));
-            makeWordGrid(asyncPredictions, 6);
+            makeWordGrid(asyncPredictions);
             predictions = asyncPredictions;
         }
     }
 
-    public void makeWordGrid(ArrayList<String> predictedWords, int no_suggestions){
-        if(predictedWords == null){
-            predictionModelArrayList = new ArrayList<PredictionModel>();
-        }
-        else {
-            //cut down predicted words array based on the settings preference
-            if (predictedWords.size() > no_suggestions) {
-                predictedWords.subList(0, no_suggestions);
-            }
+    public void makeWordGrid(ArrayList<String> predictedWords){
+        predictionModelArrayList = new ArrayList<PredictionModel>();
 
-            //initialise and populate prediction array list
-            predictionModelArrayList = new ArrayList<PredictionModel>();
-            for (String predictedWord : predictedWords) {
-                predictionModelArrayList.add((new PredictionModel(predictedWord, R.drawable.wordsmith_logo_xml)));
-            }
+        //initialise and populate prediction array list
+        predictionModelArrayList = new ArrayList<PredictionModel>();
+        for (String predictedWord : predictedWords) {
+            predictionModelArrayList.add((new PredictionModel(predictedWord, R.drawable.wordsmith_logo_xml)));
         }
+
         //make new adapter and apply to grid
         PredictionGridAdapter adapter = new PredictionGridAdapter(this, predictionModelArrayList);
         wordGrid.setAdapter(adapter);
@@ -556,7 +549,7 @@ public class MainActivity extends AppCompatActivity implements
 //        Log.d("no_sugg ", String.valueOf(store_nosugg));
 
         //reset Predicted word grid (update font, fontsize, showing images, and number of sugg)
-        makeWordGrid(predictions, 6);
+        makeWordGrid(predictions);
 
         //Resume speech recognition
         resetSpeechRecognizer();
