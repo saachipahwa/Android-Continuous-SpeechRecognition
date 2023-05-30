@@ -88,7 +88,6 @@ public class MainActivity extends AppCompatActivity implements
     public static final String KEY_IMG = "Show images under word suggestions";
     public static final String KEY_FONT = "Font";
     public static final String KEY_FONTSIZE = "Font size";
-    public static final String KEY_NOSUGG = "Number of word suggestions";
 
     ArrayList<PredictionModel> predictionModelArrayList;
     @Override
@@ -226,18 +225,23 @@ public class MainActivity extends AppCompatActivity implements
         @RequiresApi(api = Build.VERSION_CODES.N)
         @Override
         protected ArrayList<String> doInBackground(String[] params) {
-            String apiKey = getResources().getString(R.string.PREDICTIONS_API_TOKEN);
+            String apiKey = getResources().getString(R.string.PREDICTIONS_API_TOKEN); //get api token
+
+            //Values for api request body
             String modelEngine = "text-davinci-003";
             String prompt = params[0];
-            OkHttpClient client = new OkHttpClient();
+            OkHttpClient client = new OkHttpClient(); //we are using okhttp to call the api
             MediaType mediaType = MediaType.parse("application/json");
-            if (params[0].endsWith(" ")){
+
+            if (params[0].endsWith(" ")){ //remove space at the end of prompt if there is one
                 prompt = params[0].substring(0,params[0].length()-2);
             }
             RequestBody body = RequestBody.create(mediaType,
                     "{\"prompt\":\""+prompt+"\",\"temperature\":0.72,\"top_p\":1,\"frequency_penalty\":0,\"presence_penalty\":0," +
                             "\"max_tokens\":5, \"logprobs\":10}");
             Log.d("prompt", prompt);
+
+            //while loop calls api until it works
             boolean error = true;
             JSONArray choices = new JSONArray();
             while(error){
@@ -263,7 +267,6 @@ public class MainActivity extends AppCompatActivity implements
 
                 Log.d("response", responseString);
 
-
                 JSONObject responseJSONobj = null;
                 try {
                     responseJSONobj = new JSONObject(responseString);
@@ -272,6 +275,7 @@ public class MainActivity extends AppCompatActivity implements
                 }
 
                 //extract JSONArray called "top_logprobs" containing the top predicted words
+                //if api call succeeds, it will contain choices array
                 try {
                     choices = responseJSONobj.getJSONArray("choices");
                     error=false;
@@ -280,7 +284,6 @@ public class MainActivity extends AppCompatActivity implements
                     Log.d("error?", "could not get choices");
                 }
             }
-
 
             JSONObject choicesObj = new JSONObject();
             try {
@@ -303,6 +306,8 @@ public class MainActivity extends AppCompatActivity implements
                 e.printStackTrace();
             }
 
+            //takes predictions for the three words following the prompt
+            //experiment with the api playground if this is confusing
             JSONObject top_predictions = new JSONObject();
             JSONObject top_predictions_secondword = new JSONObject();
             JSONObject top_predictions_thirdword = new JSONObject();
@@ -322,6 +327,7 @@ public class MainActivity extends AppCompatActivity implements
             assert (top_predictions_secondword != null);
             assert (top_predictions_thirdword != null);
 
+            //Filtering predictions to remove punctuation & symbols & "null"
             Iterator<String> keys = top_predictions.keys();
             Iterator<String> keys_second = top_predictions_secondword.keys();
             Iterator<String> keys_third = top_predictions_thirdword.keys();
@@ -354,16 +360,15 @@ public class MainActivity extends AppCompatActivity implements
             }
 
             for(int i=0;i<asyncPredictions.size();i++){
-                asyncPredictions.set(i, asyncPredictions.get(i).toLowerCase());
-                asyncPredictions=removeDuplicates(asyncPredictions);
-                asyncPredictions.set(i, asyncPredictions.get(i).replace(" ", ""));
+                asyncPredictions=removeDuplicates(asyncPredictions); //remove duplicates ignoring case
+                asyncPredictions.set(i, asyncPredictions.get(i).replace(" ", "")); //remove spaces
             }
 
             Log.i("predictions", String.valueOf(asyncPredictions));
             return asyncPredictions;
         }
 
-        public ArrayList<String> removeDuplicates(ArrayList<String> strList) {
+        public ArrayList<String> removeDuplicates(ArrayList<String> strList) { //remove duplicates ignoring case
             for(int i = 0; i < strList.size(); i++) {
                 for(int j = i + 1; j < strList.size(); j++) {
                     if(strList.get(i).equalsIgnoreCase(strList.get(j))){
@@ -379,8 +384,8 @@ public class MainActivity extends AppCompatActivity implements
         protected void onPostExecute(ArrayList<String> asyncPredictions) {
             super.onPostExecute(asyncPredictions);
             Log.d("asyncPredictions", String.valueOf(asyncPredictions));
-            makeWordGrid(asyncPredictions);
-            predictions = asyncPredictions;
+            makeWordGrid(asyncPredictions); //makes grid
+            predictions = asyncPredictions; //copies value to global variable
         }
     }
 
