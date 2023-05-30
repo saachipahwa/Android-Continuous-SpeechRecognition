@@ -21,13 +21,10 @@ import java.util.ArrayList;
 public class PredictionGridAdapter extends ArrayAdapter<PredictionModel> {
     Typeface typeface;
     Boolean store_img;
-    String store_fontsize;
     String store_font;
-    public static final String KEY_THEME = "Theme options";
+//    public static final String KEY_THEME = "Theme options";
     public static final String KEY_IMG = "Show images under word suggestions";
     public static final String KEY_FONT = "Font";
-    public static final String KEY_FONTSIZE ="Font size";
-    public static final String KEY_NOSUGG ="Number of word suggestions";
 
     public PredictionGridAdapter(@NonNull Context context, ArrayList<PredictionModel> predictedWordArrayList){
         super(context, 0, predictedWordArrayList);
@@ -49,7 +46,6 @@ public class PredictionGridAdapter extends ArrayAdapter<PredictionModel> {
         }
 
         store_img = sharedPreferences.getBoolean(KEY_IMG, true);
-        store_fontsize = sharedPreferences.getString(KEY_FONTSIZE, "Medium");
 
     }
 
@@ -70,33 +66,6 @@ public class PredictionGridAdapter extends ArrayAdapter<PredictionModel> {
         predicted_word.setText(predictionModel.get_word());
         predicted_word.setTypeface(typeface);
 
-        //font size of text
-        switch (store_fontsize) {
-            case "Small":
-                if(store_font.equals("Montserrat")){
-                    predicted_word.setTextSize(TypedValue.COMPLEX_UNIT_SP, 20);
-                }
-                else{
-                    predicted_word.setTextSize(TypedValue.COMPLEX_UNIT_SP, 22);//speech rec text
-                }
-                break;
-            case "Medium":
-                if(store_font.equals("Montserrat")){
-                    predicted_word.setTextSize(TypedValue.COMPLEX_UNIT_SP, 22);
-                }
-                else{
-                    predicted_word.setTextSize(TypedValue.COMPLEX_UNIT_SP, 25);
-                }
-                break;
-            case "Large":
-                if(store_font.equals("Montserrat")){
-                    predicted_word.setTextSize(TypedValue.COMPLEX_UNIT_SP, 24);
-                }
-                else{
-                    predicted_word.setTextSize(TypedValue.COMPLEX_UNIT_SP, 28);
-                }
-                break;
-        }
 
         //get and check whether image should be shown
         predicted_image.setImageResource(predictionModel.getImgid());
