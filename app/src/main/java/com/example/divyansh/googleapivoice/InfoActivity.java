@@ -5,6 +5,7 @@ import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.text.Html;
 import android.text.method.LinkMovementMethod;
 import android.view.View;
 import android.widget.Button;
@@ -34,28 +35,31 @@ public class InfoActivity extends AppCompatActivity {
         text = findViewById(R.id.text);
         formButton = findViewById(R.id.feedbackFormButton);
 
-        Uri uri = Uri.parse("http://www.google.com"); // missing 'http://' will cause crashed
+        Uri uri = Uri.parse("https://forms.gle/b1P8azZEc9nMd1RQ6");
         Intent intent = new Intent(Intent.ACTION_VIEW, uri);
 
-
+        String heading0 = "<b>" + "About WordSmith" + "<b> ";
+        String text0 ="Thank you for using WordSmith! We started work on this app in late 2020 to help people <b>speak more easily</b> and <b>connect with others</b>.\n" +
+                "We will always <b>treat your personal data securely</b> (in line with GDPR).\n" +
+                "We hope you find our product useful. Please <b>contact us< at wordsmithproj@gmail.com/b> to tell us how we can improve.\n" +
+                "Team WordSmith";
+        String heading1 = "<b>" + "How to use WordSmith" + "<b> ";
+        String text1 = "To use the Predictive Text Teleprompter\n" +
+                "1. Find a <b>quiet place</b> where there is little background noise\n" +
+                "2. Make sure that your <b>phone microphone and speaker</b> are working\n" +
+                "3. Leave the app open and speak normally\n" +
+                "4. If you can’t think of the next word to say, <b>check your screen to see predicted words</b>\n" +
+                "5. If you’d like, <b>tap</b> a word to hear it read aloud\n" +
+                "6. Continue your conversation\n\n"+
+                "To <b>customise the app’s appearance</b>, press the back button below or press ⊕ \n";
         if (id==0){
-            heading.setText("About WordSmith");
-            text.setText("Thank you for using WordSmith! We started work on this app in late 2020 to help people speak more easily and connect with others.\n" +
-                    "We will always treat your personal data securely (in line with GDPR).\n" +
-                    "We hope you find our product useful. Please contact us at wordsmithproj@gmail.com to tell us how we can improve.\n" +
-                    "Team WordSmith");
+            heading.setText(Html.fromHtml(heading0));
+            text.setText(Html.fromHtml(text0));
             formButton.setVisibility(View.INVISIBLE);
         }
         else if (id==1){
-            heading.setText("How to use this app");
-            text.setText("To use the Predictive Text Teleprompter\n" +
-                    "1. Find a quiet place where there is little background noise\n" +
-                    "2. Make sure that your phone microphone and speaker are working\n" +
-                    "3. Leave the app open and speak normally\n" +
-                    "4. If you can’t think of the next word to say, check your screen to see predicted words\n" +
-                    "5. If you’d like, tap a word to hear it read aloud\n" +
-                    "6. Continue your conversation\n\n"+
-                    "To customise the app’s appearance, press the back button below or press ⊕ \n");
+            heading.setText(Html.fromHtml(heading1));
+            text.setText(Html.fromHtml(text1));
             formButton.setVisibility(View.VISIBLE);
             formButton.setOnClickListener(new View.OnClickListener() {
                 @Override
