@@ -39,19 +39,19 @@ public class InfoActivity extends AppCompatActivity {
         Intent intent = new Intent(Intent.ACTION_VIEW, uri);
 
         String heading0 = "<b>" + "About WordSmith" + "<b> ";
-        String text0 ="Thank you for using WordSmith! We started work on this app in late 2020 to help people <b>speak more easily</b> and <b>connect with others</b>.\n" +
-                "We will always <b>treat your personal data securely</b> (in line with GDPR).\n" +
-                "We hope you find our product useful. Please <b>contact us< at wordsmithproj@gmail.com/b> to tell us how we can improve.\n" +
+        String text0 ="Thank you for using WordSmith! We started work on this app in late 2020 to help people <b>speak more easily</b> and <b>connect with others</b>.<br><br>" +
+                "We will always <b>treat your personal data securely</b> (in line with GDPR).<br><br>" +
+                "We hope you find our product useful. Please <b>contact us< at wordsmithproj@gmail.com/b> to tell us how we can improve.<br><br>" +
                 "Team WordSmith";
         String heading1 = "<b>" + "How to use WordSmith" + "<b> ";
-        String text1 = "To use the Predictive Text Teleprompter\n" +
-                "1. Find a <b>quiet place</b> where there is little background noise\n" +
-                "2. Make sure that your <b>phone microphone and speaker</b> are working\n" +
-                "3. Leave the app open and speak normally\n" +
-                "4. If you can’t think of the next word to say, <b>check your screen to see predicted words</b>\n" +
-                "5. If you’d like, <b>tap</b> a word to hear it read aloud\n" +
-                "6. Continue your conversation\n\n"+
-                "To <b>customise the app’s appearance</b>, press the back button below or press ⊕ \n";
+        String text1 = "To use the Predictive Text Teleprompter<br>" +
+                "1. Find a <b>quiet place</b> where there is little background noise<br>" +
+                "2. Make sure that your <b>phone microphone and speaker</b> are working<br>" +
+                "3. Leave the app open and speak normally<br>" +
+                "4. If you can’t think of the next word to say, <b>check your screen to see predicted words</b><br>" +
+                "5. If you’d like, <b>tap</b> a word to hear it read aloud<br>" +
+                "6. Continue your conversation<br><br>"+
+                "To <b>customise the app’s appearance</b>, press the back button below or press ⊕ from the home screen. <br>";
         if (id==0){
             heading.setText(Html.fromHtml(heading0));
             text.setText(Html.fromHtml(text0));
@@ -64,7 +64,7 @@ public class InfoActivity extends AppCompatActivity {
             formButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("http://google.com")));
+                    startActivity(new Intent(Intent.ACTION_VIEW, uri));
 
                 }
             });

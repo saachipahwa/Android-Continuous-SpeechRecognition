@@ -41,7 +41,7 @@
         android:id="@+id/feedbackFormButton"
         android:layout_width="150dp"
         android:layout_height="60dp"
-        android:layout_marginTop="550dp"
+        android:layout_marginTop="560dp"
         android:layout_centerHorizontal="true"
         android:text="Give us feedback" />
 
