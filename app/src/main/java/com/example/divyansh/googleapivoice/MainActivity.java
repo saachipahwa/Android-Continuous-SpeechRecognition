@@ -394,12 +394,12 @@ public class MainActivity extends AppCompatActivity implements
     public void makeWordGrid(ArrayList<String> predictedWords){
         predictionModelArrayList = new ArrayList<PredictionModel>();
 
-        //initialise and populate prediction array list
-        predictionModelArrayList = new ArrayList<PredictionModel>();
-        for (String predictedWord : predictedWords) {
-            predictionModelArrayList.add((new PredictionModel(predictedWord, R.drawable.wordsmith_logo_xml)));
+        if (predictedWords!=null) {
+            //initialise and populate prediction array list
+            for (String predictedWord : predictedWords) {
+                predictionModelArrayList.add((new PredictionModel(predictedWord, R.drawable.wordsmith_logo_xml)));
+            }
         }
-
         //make new adapter and apply to grid
         PredictionGridAdapter adapter = new PredictionGridAdapter(this, predictionModelArrayList);
         wordGrid.setAdapter(adapter);
