@@ -13,7 +13,6 @@ import android.preference.PreferenceManager;
 import android.speech.RecognitionListener;
 import android.speech.RecognizerIntent;
 import android.speech.SpeechRecognizer;
-
 import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.app.AppCompatDelegate;
@@ -36,13 +35,6 @@ import java.io.OutputStream;
 import java.net.URL;
 import com.androidnetworking.AndroidNetworking;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
-import com.mashape.unirest.http.HttpResponse;
-import com.mashape.unirest.http.JsonNode;
-import com.mashape.unirest.http.Unirest;
-import com.mashape.unirest.http.exceptions.UnirestException;
-import com.mashape.unirest.request.GetRequest;
-import com.mashape.unirest.request.body.MultipartBody;
-import com.mashape.unirest.request.body.RequestBodyEntity;
 import okhttp3.*;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -147,6 +139,7 @@ public class MainActivity extends AppCompatActivity implements
             public void onClick(View view) {
                 returnedText.setText("Speak to start");
                 makeWordGrid(null);
+                ongoingSpeech="";
             }
         });
 
@@ -248,6 +241,7 @@ public class MainActivity extends AppCompatActivity implements
             if (params[0].endsWith(" ")){ //remove space at the end of prompt if there is one
                 prompt = params[0].substring(0,params[0].length()-2);
             }
+
             RequestBody body = RequestBody.create(mediaType,
                     "{\"prompt\":\""+prompt+"\",\"temperature\":0.72,\"top_p\":1,\"frequency_penalty\":0,\"presence_penalty\":0," +
                             "\"max_tokens\":5, \"logprobs\":10}");
@@ -348,7 +342,9 @@ public class MainActivity extends AppCompatActivity implements
                 String key = keys.next();
                 if (!Pattern.matches("null", key)){
                      if (Pattern.matches("[ ]*[a-zA-Z']+[ ]*", key)) {
-                        asyncPredictions.add(key);
+                         if (!Pattern.matches("don|can|won|'t|'|'m", key)) {
+                             asyncPredictions.add(key);
+                         }
                      }
                 }
             }
@@ -357,7 +353,9 @@ public class MainActivity extends AppCompatActivity implements
                 String key = keys_second.next();
                 if (!Pattern.matches("null", key)) {
                     if (Pattern.matches("[ ]*[a-zA-Z']+[ ]*", key)) {
-                        asyncPredictions.add(key);
+                        if (!Pattern.matches("don|can|won|'t|'|'m", key)) {
+                            asyncPredictions.add(key);
+                        }
                     }
                 }
             }
@@ -366,7 +364,9 @@ public class MainActivity extends AppCompatActivity implements
                 String key = keys_third.next();
                 if (!Pattern.matches("null", key)){
                     if (Pattern.matches("[ ]*[a-zA-Z']+[ ]*", key)){
-                        asyncPredictions.add(key);
+                        if (!Pattern.matches("don|can|won|'t|'|'m", key)) {
+                            asyncPredictions.add(key);
+                        }
                     }
                 }
             }
@@ -394,12 +394,12 @@ public class MainActivity extends AppCompatActivity implements
     public void makeWordGrid(ArrayList<String> predictedWords){
         predictionModelArrayList = new ArrayList<PredictionModel>();
 
-        //initialise and populate prediction array list
-        predictionModelArrayList = new ArrayList<PredictionModel>();
-        for (String predictedWord : predictedWords) {
-            predictionModelArrayList.add((new PredictionModel(predictedWord, R.drawable.wordsmith_logo_xml)));
+        if (predictedWords!=null) {
+            //initialise and populate prediction array list
+            for (String predictedWord : predictedWords) {
+                predictionModelArrayList.add((new PredictionModel(predictedWord, R.drawable.wordsmith_logo_xml)));
+            }
         }
-
         //make new adapter and apply to grid
         PredictionGridAdapter adapter = new PredictionGridAdapter(this, predictionModelArrayList);
         wordGrid.setAdapter(adapter);
