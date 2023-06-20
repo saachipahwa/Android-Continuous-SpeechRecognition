@@ -426,11 +426,11 @@ public class MainActivity extends AppCompatActivity implements
         Context context = getApplicationContext();
 
         Log.i(LOG_TAG, "FAILED " + errorMessage);
-        if (!errorMessage.equals("No match")) {
-            Toast toast = Toast.makeText(context, errorMessage, duration);
-            toast.setGravity(Gravity.CENTER, 0, 500);
-            toast.show();
-        }
+//        if (!errorMessage.equals("No match")) {
+//            Toast toast = Toast.makeText(context, errorMessage, duration);
+//            toast.setGravity(Gravity.CENTER, 0, 500);
+//            toast.show();
+//        }
 
         // rest voice recogniser
         resetSpeechRecognizer();
