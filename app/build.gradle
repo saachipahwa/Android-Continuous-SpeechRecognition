@@ -7,11 +7,11 @@ android {
         exclude 'META-INF/DEPENDENCIES'
     }
 
-    compileSdkVersion 28
+    compileSdkVersion 33
     defaultConfig {
         applicationId "com.example.divyansh.googleapivoice"
-        minSdkVersion 21
-        targetSdkVersion 28
+        minSdkVersion 33
+        targetSdkVersion 33
         versionCode 1
         versionName "1.0"
         vectorDrawables.useSupportLibrary = true
@@ -35,7 +35,7 @@ android {
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
     //noinspection GradleCompatible
-    implementation 'androidx.appcompat:appcompat:1.0.0'
+    implementation 'androidx.appcompat:appcompat:1.3.1'
     implementation 'androidx.constraintlayout:constraintlayout:1.1.3'
     implementation 'com.amitshekhar.android:android-networking:1.0.2'
     implementation 'androidx.preference:preference:1.1.0'
