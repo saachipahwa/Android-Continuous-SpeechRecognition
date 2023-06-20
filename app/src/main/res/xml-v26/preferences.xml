@@ -4,12 +4,11 @@
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_height="500dp"
     android:layout_width="400dp">
-   <PreferenceCategory android:title="Preferences">
-    <SwitchPreference
-        android:defaultValue="true"
-        android:key="@string/Show_images"
-        android:title="@string/Show_images" />
-
+<!--   <PreferenceCategory android:title="Preferences">-->
+<!--    <SwitchPreference-->
+<!--        android:defaultValue="true"-->
+<!--        android:key="@string/Show_images"-->
+<!--        android:title="@string/Show_images" />-->
 <!--   <SeekBarPreference-->
 <!--       android:progress="6"-->
 <!--       android:defaultValue="6"-->
@@ -18,7 +17,7 @@
 <!--       android:min="1"-->
 <!--       android:max="10"-->
 <!--       />-->
-   </PreferenceCategory>
+<!--   </PreferenceCategory>-->
 
     <PreferenceCategory android:title="Appearance">
     <ListPreference
