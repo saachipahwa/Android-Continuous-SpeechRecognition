@@ -633,6 +633,7 @@ public class MainActivity extends AppCompatActivity implements
         }
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.O)
     @Override
     public void onResults(Bundle results) {
         Log.i(LOG_TAG, "onResults");
@@ -646,10 +647,19 @@ public class MainActivity extends AppCompatActivity implements
         }
         returnedText.setText(last10Words(bestMatch));
 
-//      Getting predicted words
+        //Getting predicted words
         AsyncTaskRunner runner = new AsyncTaskRunner();
         if (bestMatch!=null){
             ongoingSpeech += " " + bestMatch;}
+        Log.d("speech before", ongoingSpeech);
+        ArrayList<String> ongoingSpeechWords = new ArrayList<String>(Arrays.asList(ongoingSpeech.split("\\s+")));
+        Log.d("speechwords before", String.valueOf(ongoingSpeechWords));
+        if (ongoingSpeechWords.size() > 20){ //if ongoing speech is too long, take the latter half
+            ongoingSpeechWords = new ArrayList(ongoingSpeechWords.subList(ongoingSpeechWords.size()-15, ongoingSpeechWords.size()));
+            Log.d("speechwords after", String.valueOf(ongoingSpeechWords));
+            ongoingSpeech = String.join(" ", ongoingSpeechWords);
+            Log.d("speech after", ongoingSpeech);
+        }
         runner.execute(ongoingSpeech);
 
         speech.startListening(recognizerIntent);
