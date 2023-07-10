@@ -59,7 +59,7 @@ public class MainActivity extends AppCompatActivity implements
     private TextView returnedText;
     private ImageView bigPause;
     private SpeechRecognizer speech = null;
-    private Intent recognizerIntent;
+    private Intent recognizerIntent = new Intent();
     private String LOG_TAG = "VoiceRecognitionActivity";
     private String ongoingSpeech="";
     //UI
