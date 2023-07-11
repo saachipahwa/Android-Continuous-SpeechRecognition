@@ -2,6 +2,7 @@ package com.example.divyansh.googleapivoice;
 
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Typeface;
 import android.net.Uri;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
@@ -13,9 +14,14 @@ import android.widget.ImageButton;
 import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.content.res.ResourcesCompat;
 
 public class InfoActivity extends AppCompatActivity {
 
+    String store_font;
+    String store_fontsize;
+    public static final String KEY_FONT = "Font";
+    public static final String KEY_FONTSIZE = "Font size";
     private TextView heading;
     private TextView text;
     private Button formButton;
@@ -80,6 +86,30 @@ public class InfoActivity extends AppCompatActivity {
                 finish();
             }
         });
+
+        //change font
+        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(InfoActivity.this);
+
+        store_font = sharedPreferences.getString(KEY_FONT, "Montserrat");
+        Typeface typeface = ResourcesCompat.getFont(getApplicationContext(), R.font.montserratmed);
+
+        switch (store_font) {
+            case "Montserrat":
+                typeface = ResourcesCompat.getFont(getApplicationContext(), R.font.montserratmed);
+                break;
+            case "Calibri":
+                typeface = ResourcesCompat.getFont(getApplicationContext(), R.font.calibri);
+                break;
+            case "Arial":
+                typeface = ResourcesCompat.getFont(getApplicationContext(), R.font.arial);
+                break;
+            case "Helvetica":
+                typeface = ResourcesCompat.getFont(getApplicationContext(), R.font.helvetica);
+                break;
+        }
+        heading.setTypeface(typeface);
+        text.setTypeface(typeface);
+        formButton.setTypeface(typeface);
 
     }
 

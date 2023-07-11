@@ -17,7 +17,6 @@ import androidx.core.content.res.ResourcesCompat;
 
 public class SettingsActivity extends AppCompatActivity {
 
-    String store_theme;
     String store_font;
     String store_fontsize;
     private TextView heading;
@@ -81,7 +80,7 @@ public class SettingsActivity extends AppCompatActivity {
 
         aboutButton.setTypeface(typeface);
         howtoButton.setTypeface(typeface);
-
+        heading.setTypeface(typeface);
         // inflate settings fragment
         getSupportFragmentManager().beginTransaction()
                 .replace(R.id.list_container, new SettingsFragment())
