@@ -6,6 +6,16 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     tools:context=".SettingsActivity">
 
+    <ImageView
+        android:id="@+id/wordsmithLogo"
+        app:srcCompat="@drawable/wordsmith_logo_xml"
+        android:layout_width="154dp"
+        android:layout_height="81dp"
+        android:layout_marginStart="257dp"
+        android:layout_marginTop="5dp"
+        android:layout_marginEnd="0dp"
+        android:contentDescription="@string/logo" />
+
     <TextView
         android:id="@+id/heading"
         android:layout_width="363dp"
@@ -23,6 +33,7 @@
 
     <TextView
         android:id="@+id/text"
+        android:layout_below="@+id/heading"
         android:layout_width="363dp"
         android:layout_height="wrap_content"
         android:layout_alignParentStart="true"
@@ -39,23 +50,12 @@
 
     <Button
         android:id="@+id/feedbackFormButton"
+        android:layout_below="@+id/text"
         android:layout_width="150dp"
         android:layout_height="60dp"
         android:layout_marginTop="560dp"
         android:layout_centerHorizontal="true"
         android:text="Give us feedback" />
-
-
-    <ImageView
-        android:id="@+id/wordsmithLogo"
-        app:srcCompat="@drawable/wordsmith_logo_xml"
-        android:layout_width="154dp"
-        android:layout_height="81dp"
-        android:layout_marginStart="257dp"
-        android:layout_marginTop="5dp"
-        android:layout_marginEnd="0dp"
-        android:contentDescription="@string/logo" />
-
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/homeButton"
