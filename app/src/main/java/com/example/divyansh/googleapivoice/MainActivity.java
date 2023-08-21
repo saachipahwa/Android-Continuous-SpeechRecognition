@@ -64,7 +64,7 @@ public class MainActivity extends AppCompatActivity implements
     private String ongoingSpeech="";
     //UI
     private FloatingActionButton pauseButton;
-    private FloatingActionButton playButton;
+    boolean pause=false;
     private FloatingActionButton resetButton;
     private FloatingActionButton settingsButton;
     //WordGrid
@@ -87,13 +87,11 @@ public class MainActivity extends AppCompatActivity implements
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         RelativeLayout layout = (RelativeLayout) findViewById(R.id.relativeLayout1);
-
+        Context context = getApplicationContext();
         // UI initialisation
         returnedText = findViewById(R.id.textView1);
         bigPause = findViewById(R.id.indicator_pause);
         pauseButton = findViewById(R.id.pauseButton);
-        playButton = findViewById(R.id.playButton);
-        playButton.hide();
         bigPause.setVisibility(View.INVISIBLE);
         resetButton = findViewById(R.id.resetButton);
         settingsButton = findViewById(R.id.plusButton);
@@ -106,31 +104,45 @@ public class MainActivity extends AppCompatActivity implements
             }
         });
 
+
+
         pauseButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-                onStop();
-                pauseButton.hide();
-                playButton.show();
-                bigPause.setVisibility(View.VISIBLE);
-            }
-
-        });
-
-        playButton.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View v) {
-                onResume();
-                playButton.hide();
-                bigPause.setVisibility(View.INVISIBLE);
-                pauseButton.show();
+                Log.d("pause var", String.valueOf(pause));
+                if (pause==true){ //if paused then play
+                    onResume();
+                    pause=false;
+                    Log.d("pause button - ", "playing");
+                    bigPause.setVisibility(View.INVISIBLE);
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                        pauseButton.setImageDrawable(getResources().getDrawable(R.drawable.ic_baseline_pause_24, context.getTheme()));
+                    } else {
+                        pauseButton.setImageDrawable(getResources().getDrawable(R.drawable.ic_baseline_pause_24));
+                    }
+                }
+                else { //if recording then pause
+                    onStop();
+                    pause=true;
+                    Log.d("pause button - ", "pausing");
+                    bigPause.setVisibility(View.VISIBLE);
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                        pauseButton.setImageDrawable(getResources().getDrawable(R.drawable.ic_baseline_play_arrow_24, context.getTheme()));
+                    } else {
+                        pauseButton.setImageDrawable(getResources().getDrawable(R.drawable.ic_baseline_play_arrow_24));
+                    }
+                }
             }
         });
 
         bigPause.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 onResume();
-                playButton.hide();
                 bigPause.setVisibility(View.INVISIBLE);
-                pauseButton.show();
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                    pauseButton.setImageDrawable(getResources().getDrawable(R.drawable.ic_baseline_pause_24, context.getTheme()));
+                } else {
+                    pauseButton.setImageDrawable(getResources().getDrawable(R.drawable.ic_baseline_pause_24));
+                }
             }
         });
 
@@ -157,20 +169,20 @@ public class MainActivity extends AppCompatActivity implements
 
         //change font of speech recognition text
         store_font = sharedPreferences.getString(KEY_FONT, "Montserrat");
-        Typeface typeface = ResourcesCompat.getFont(getApplicationContext(), R.font.montserratmed);
+        Typeface typeface = ResourcesCompat.getFont(context, R.font.montserratmed);
 
         switch (store_font) {
             case "Montserrat":
-                typeface = ResourcesCompat.getFont(getApplicationContext(), R.font.montserratmed);
+                typeface = ResourcesCompat.getFont(context, R.font.montserratmed);
                 break;
             case "Calibri":
-                typeface = ResourcesCompat.getFont(getApplicationContext(), R.font.calibri);
+                typeface = ResourcesCompat.getFont(context, R.font.calibri);
                 break;
             case "Arial":
-                typeface = ResourcesCompat.getFont(getApplicationContext(), R.font.arial);
+                typeface = ResourcesCompat.getFont(context, R.font.arial);
                 break;
             case "Helvetica":
-                typeface = ResourcesCompat.getFont(getApplicationContext(), R.font.helvetica);
+                typeface = ResourcesCompat.getFont(context, R.font.helvetica);
                 break;
         }
         returnedText.setTypeface(typeface);
@@ -196,13 +208,13 @@ public class MainActivity extends AppCompatActivity implements
         }
 
         // initialise package that simplifies API calls
-        AndroidNetworking.initialize(getApplicationContext());
+        AndroidNetworking.initialize(context);
 
         // start speech recogniser
         resetSpeechRecognizer();
 
         // check for permission
-        int permissionCheck = ContextCompat.checkSelfPermission(getApplicationContext(), Manifest.permission.RECORD_AUDIO);
+        int permissionCheck = ContextCompat.checkSelfPermission(context, Manifest.permission.RECORD_AUDIO);
         if (permissionCheck != PackageManager.PERMISSION_GRANTED) {
             ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.RECORD_AUDIO}, PERMISSIONS_REQUEST_RECORD_AUDIO);
             return;
@@ -423,7 +435,7 @@ public class MainActivity extends AppCompatActivity implements
     public void onError(int errorCode) {
         CharSequence errorMessage = (CharSequence) getErrorText(errorCode);
         int duration = Toast.LENGTH_SHORT;
-        Context context = getApplicationContext();
+//        Context context = getApplicationContext();
 
         Log.i(LOG_TAG, "FAILED " + errorMessage);
 //        if (!errorMessage.equals("No match")) {
@@ -503,6 +515,7 @@ public class MainActivity extends AppCompatActivity implements
         Log.i(LOG_TAG, "resume");
         super.onResume();
 
+        Context context = getApplicationContext();
         //Resume after returning from settings - this checks new preferences
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(MainActivity.this);
         //change theme colour of main activity
@@ -517,20 +530,20 @@ public class MainActivity extends AppCompatActivity implements
 
         //change font of speech recognition text
         store_font = sharedPreferences.getString(KEY_FONT, "Montserrat");
-        Typeface typeface = ResourcesCompat.getFont(getApplicationContext(), R.font.montserratmed);
+        Typeface typeface = ResourcesCompat.getFont(context, R.font.montserratmed);
 
         switch (store_font) {
             case "Montserrat":
-                typeface = ResourcesCompat.getFont(getApplicationContext(), R.font.montserratmed);
+                typeface = ResourcesCompat.getFont(context, R.font.montserratmed);
                 break;
             case "Calibri":
-                typeface = ResourcesCompat.getFont(getApplicationContext(), R.font.calibri);
+                typeface = ResourcesCompat.getFont(context, R.font.calibri);
                 break;
             case "Arial":
-                typeface = ResourcesCompat.getFont(getApplicationContext(), R.font.arial);
+                typeface = ResourcesCompat.getFont(context, R.font.arial);
                 break;
             case "Helvetica":
-                typeface = ResourcesCompat.getFont(getApplicationContext(), R.font.helvetica);
+                typeface = ResourcesCompat.getFont(context, R.font.helvetica);
                 break;
         }
         returnedText.setTypeface(typeface);

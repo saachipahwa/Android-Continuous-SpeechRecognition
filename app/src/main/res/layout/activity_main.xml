@@ -6,6 +6,19 @@
     android:layout_height="match_parent"
     android:orientation="vertical" >
 
+    <ImageView
+        android:id="@+id/wordsmithLogo"
+        android:layout_width="154dp"
+        android:layout_height="81dp"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentEnd="true"
+        android:layout_centerVertical="true"
+        android:layout_marginStart="257dp"
+        android:layout_marginTop="5dp"
+        android:layout_marginEnd="0dp"
+        app:srcCompat="@drawable/wordsmith_logo_xml" />
+
     <TextView
         android:id="@+id/textView1"
         android:layout_width="363dp"
@@ -35,83 +48,71 @@
 
     <GridView
         android:id="@+id/wordGrid"
+        android:layout_marginTop="20dp"
         android:layout_below="@+id/indicator_pause"
         android:layout_width="fill_parent"
-        android:layout_height="362dp"
+        android:layout_height="400dp"
         android:layout_alignParentStart="true"
         android:layout_alignParentEnd="true"
-        android:layout_alignParentBottom="true"
         android:layout_centerHorizontal="true"
-        android:layout_marginStart="10dp"
-        android:layout_marginEnd="10dp"
-        android:layout_marginBottom="117dp"
         android:horizontalSpacing="10dp"
         android:verticalSpacing="20dp"
         android:numColumns="3"
         android:padding="5dp"
-        android:scrollbars="vertical"
-        >
+        android:scrollbars="vertical">
     </GridView>
 
-
+<LinearLayout android:layout_width="match_parent"
+    android:padding="5dp"
+    android:layout_height="wrap_content"
+    android:orientation="horizontal"
+    android:gravity="center"
+    android:layout_alignParentBottom="true"
+    android:layout_marginBottom="10dp"
+    >
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/pauseButton"
-        android:layout_width="90dp"
-        android:layout_height="90dp"
+        android:elevation="0dp"
+        android:layout_width="0dp"
+        android:layout_height="60dp"
+        android:layout_weight="1"
         android:layout_alignParentStart="true"
         android:layout_alignParentBottom="true"
-        android:layout_marginStart="106dp"
-        android:layout_marginBottom="50dp"
         android:contentDescription="Pauses listening"
-        android:src="@drawable/ic_baseline_pause_24" />
-
-    <com.google.android.material.floatingactionbutton.FloatingActionButton
-        android:id="@+id/playButton"
-        android:layout_width="90dp"
-        android:layout_height="90dp"
-        android:layout_alignParentStart="true"
-        android:layout_alignParentBottom="true"
-        android:layout_marginStart="106dp"
-        android:layout_marginBottom="50dp"
-        android:contentDescription="Resumes listening"
-        android:src="@drawable/ic_baseline_play_arrow_24" />
+        android:layout_margin="5dp"
+        android:src="@drawable/ic_baseline_pause_24"
+        />
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/resetButton"
-        android:layout_width="90dp"
-        android:layout_height="90dp"
+        android:elevation="0dp"
+        android:layout_width="0dp"
+        android:layout_height="60dp"
+        android:layout_weight="1"
         android:layout_alignParentStart="true"
         android:layout_alignParentBottom="true"
         android:layout_centerHorizontal="true"
-        android:layout_marginStart="169dp"
-        android:layout_marginBottom="50dp"
         android:contentDescription="Resumes listening"
-        android:src="@drawable/ic_baseline_reset_24" />
+        android:layout_margin="5dp"
+        android:src="@drawable/ic_baseline_reset_24"
+
+        />
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/plusButton"
-        android:layout_width="90dp"
-        android:layout_height="90dp"
-        android:src="@drawable/ic_baseline_settings_24"
-        android:contentDescription="Opens settings page"
+        android:elevation="0dp"
+        android:layout_width="0dp"
+        android:layout_height="60dp"
+        android:layout_weight="1"
         android:layout_alignParentEnd="true"
         android:layout_alignParentBottom="true"
-        android:layout_marginEnd="106dp"
-        android:layout_marginBottom="50dp"
+        android:contentDescription="Opens settings page"
+        android:layout_margin="5dp"
+        android:src="@drawable/ic_baseline_settings_24"
         />
 
+</LinearLayout>
 
-    <ImageView
-        android:id="@+id/wordsmithLogo"
-        android:layout_width="154dp"
-        android:layout_height="81dp"
-        android:layout_alignParentStart="true"
-        android:layout_alignParentTop="true"
-        android:layout_alignParentEnd="true"
-        android:layout_centerVertical="true"
-        android:layout_marginStart="257dp"
-        android:layout_marginTop="5dp"
-        android:layout_marginEnd="0dp"
-        app:srcCompat="@drawable/wordsmith_logo_xml" />
+
 
 </RelativeLayout>
