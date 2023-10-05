@@ -47,7 +47,7 @@ public class InfoActivity extends AppCompatActivity {
         String heading0 = "<b>" + "About WordSmith" + "<b> ";
         String text0 ="Thank you for using WordSmith! We started work on this app in late 2020 to help people <b>speak more easily</b> and <b>connect with others</b>.<br><br>" +
                 "We will always <b>treat your personal data securely</b> (in line with GDPR).<br><br>" +
-                "We hope you find our product useful. Please <b>contact us< at wordsmithproj@gmail.com/b> to tell us how we can improve.<br><br>" +
+                "We hope you find our product useful. Please <b>contact us</b> at <b>wordsmithproj@gmail.com</b> to tell us how we can improve.<br><br>" +
                 "Team WordSmith";
         String heading1 = "<b>" + "How to use WordSmith" + "<b> ";
         String text1 = "To use the Predictive Text Teleprompter<br>" +
